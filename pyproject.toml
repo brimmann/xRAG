@@ -1,7 +1,7 @@
 [project]
 name = "xrag"
 version = "0.1.0"
-description = "Add your description here"
+description = "xRAG"
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
@@ -15,3 +15,6 @@ torch = { index = "pytorch" }
 name = "pytorch"
 url = "https://download.pytorch.org/whl/cu121"
 explicit = true
+
+[tool.uv.extra-build-dependencies]
+flash-attn = ["setuptools"]
