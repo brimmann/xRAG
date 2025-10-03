@@ -15,6 +15,3 @@ torch = { index = "pytorch" }
 name = "pytorch"
 url = "https://download.pytorch.org/whl/cu121"
 explicit = true
-
-[tool.uv.extra-build-dependencies]
-flash-attn = ["setuptools"]
