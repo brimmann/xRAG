@@ -28,3 +28,6 @@ pretrained_model
 DeepSpeed
 experiments
 .vscode
+
+# mine
+.venv
