@@ -219,19 +219,20 @@ def llm_for_open_generation(
             stopping_criteria = stop_sequences_criteria(llm_tokenizer, 0, input_ids.shape[0])
 
         ## actual computation
+        print("Checking update")
         generated_output = llm.generate(
             input_ids = input_ids,
             attention_mask = attention_mask,
             stopping_criteria=stopping_criteria,
             do_sample=False,
             max_new_tokens=100,
-            pad_token_id=tokenizer.pad_token_id,
+            pad_token_id=llm_tokenizer.pad_token_id,
             use_cache=True,
             **retrieval_kwargs,
         )
         ## because HF generate with inputs_embeds would not return prompt
         input_length = 0 if retrieval_kwargs else input_ids.shape[1]
-        results = tokenizer.batch_decode(generated_output[:,input_length:],skip_special_tokens=False)
+        results = llm_tokenizer.batch_decode(generated_output[:,input_length:],skip_special_tokens=False)
         generated_answers.extend(results)
         progress_bar.update(batch_size)
 
