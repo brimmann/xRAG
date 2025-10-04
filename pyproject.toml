@@ -20,6 +20,9 @@ dependencies = [
     "black>=25.9.0",
 ]
 
+[tool.uv]
+no-build-isolation = true
+
 [tool.uv.sources]
 torch = { index = "pytorch" }
 
