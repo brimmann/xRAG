@@ -56,6 +56,7 @@ class XMistralForCausalLM(MistralForCausalLM):
 
         retrieval_embeds = self.projector(retrieval_embeds.to(inputs_embeds.dtype))
         inputs_embeds[input_ids==self.xrag_token_id] = retrieval_embeds
+        print(f"Shape of final inputs_embeds fed to the model: {inputs_embeds.shape}")
         
         return inputs_embeds
 
