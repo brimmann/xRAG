@@ -32,3 +32,5 @@ experiments
 # mine
 .venv
 offload
+savedmodels
+tensorstorage
