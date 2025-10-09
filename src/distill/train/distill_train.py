@@ -20,7 +20,7 @@ teacher_projector_config = SimpleNamespace(
 )
 
 teacher_projector = Projector(teacher_projector_config)
-teacher_projector.load_state_dict(torch.load("/content/MyDrive/drive/tensorstorage/teacher_projector_weights.pth"))
+teacher_projector.load_state_dict(torch.load("/content/MyDrive/tensorstorage/teacher_projector_weights.pth"))
 teacher_projector.to(device)
 
 # Student model
@@ -39,7 +39,7 @@ projection_layer.to(device)
 
 # Loading embeddings from file
 doc_embeds_list = None
-with open('/content/MyDrive/drive/tensorstorage/all_doc_embeds.pkl', 'rb') as f:
+with open('/content/MyDrive/tensorstorage/all_doc_embeds.pkl', 'rb') as f:
     doc_embeds_list = pickle.load(f)
 
 # Setting up dataloader
@@ -68,7 +68,7 @@ optimizer = optim.Adam(params_to_optimize, lr=1e-4)
 num_epochs = 250
 loss_function = torch.nn.MSELoss()
 best_val_loss = float('inf')
-output_dir = "/content/MyDrive/drive/tensorstorage/distilled_model"
+output_dir = "/content/MyDrive/tensorstorage/distilled_model"
 os.makedirs(output_dir, exist_ok=True)
 
 
