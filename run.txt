@@ -1,0 +1,17 @@
+uv run accelerate launch \
+    --mixed_precision bf16 \
+    --num_machines 1 \
+    --num_processes 1 \
+    -m \
+    src.language_modeling.train \
+    --config config/language_modeling/pretrain.yaml 
+
+
+uv run accelerate launch \
+    --config_file acc_config.yaml \
+    --mixed_precision bf16 \
+    --num_machines 1 \
+    --num_processes 1 \
+    -m \
+    src.language_modeling.train \
+    --config config/language_modeling/pretrain.yaml 
