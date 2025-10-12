@@ -35,7 +35,7 @@ class Projector(nn.Module):
 
 ## compatible with normal Mistral model
 class XMistralForCausalLM(MistralForCausalLM):
-    def __init__(self,config):
+    def __init__(self,config, **kwargs):
         super().__init__(config)
         if hasattr(config,"retriever_hidden_size") and config.retriever_hidden_size > 0: 
             self.projector = Projector(config)
