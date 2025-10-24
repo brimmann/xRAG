@@ -41,6 +41,8 @@ from src.model import (
     XMixtralForCausalLM,
     XMixtralConfig,
     SFR,
+    XGemma3ForCausalLM,
+    XGemma3Config
 )
 
 from src.language_modeling.utils import (
@@ -457,6 +459,9 @@ def main():
         tokenizer.padding_side = 'left'    
     if args.chat_format == 'mistral':
         MODEL_CLASS,CONFIG_CLASS = XMistralForCausalLM,XMistralConfig
+        tokenizer.padding_side = 'left'
+    if args.chat_format == "gemma3":
+        MODEL_CLASS,CONFIG_CLASS = XGemma3ForCausalLM,XGemma3Config
         tokenizer.padding_side = 'left'
     config = CONFIG_CLASS.from_pretrained(args.model_name_or_path,retriever_hidden_size=retriever_hidden_size)
     model = MODEL_CLASS.from_pretrained(
