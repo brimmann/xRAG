@@ -36,6 +36,29 @@ def _concat_messages_mistral(messages,tokenizer):
             raise ValueError("Invalid role: {}".format(message["role"]))
     return message_text
 
+def _concat_messages_gemma3(messages, tokenizer):
+    """
+    Formats a list of messages for a Gemma model by manually applying the chat template.
+    """
+    message_text = ""
+    for message in messages:
+        # Each turn starts with a start_of_turn token
+        message_text += "<start_of_turn>"
+        
+        if message["role"] == "user":
+            # The user role is 'user'
+            message_text += "user\n" + message["content"].strip()
+        elif message["role"] == "assistant":
+            # The assistant role is 'model' in Gemma's format
+            message_text += "model\n" + message["content"].strip()
+        else:
+            raise ValueError("Invalid role: {}".format(message["role"]))
+        
+        # Each turn ends with an end_of_turn token
+        message_text += "<end_of_turn>\n"
+        
+    return message_text
+
 def _encode_chat_format(
         messages,
         tokenizer,
@@ -71,7 +94,7 @@ def _encode_chat_format(
                     _concat_messages(messages[:message_idx],tokenizer), return_tensors='pt', max_length=max_seq_length, truncation=True
                 ).input_ids.shape[1]
             
-            if chat_format in ['mistral','mixtral']:
+            if chat_format in ['mistral','mixtral', "gemma3"]:
                 messages_so_far = _concat_messages(messages[:message_idx+1],tokenizer)         
 
             message_end_idx = tokenizer(
