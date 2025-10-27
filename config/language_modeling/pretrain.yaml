@@ -1,12 +1,12 @@
 ## data
-# train_file: data/sample_paraphrase_pretrain.jsonl
+train_file: data/sample_paraphrase_pretrain.jsonl
 # dev_file: data/pretrain/wikipedia/dev.jsonl
 online_dataset: true
 max_seq_length: 336
 retrieval_context_length: 180
 preprocessing_num_workers: 1
 overwrite_cache: false
-max_train_samples: 2
+max_train_samples: 24000
 
 ## model
 model_name_or_path: google/gemma-3-1b-it

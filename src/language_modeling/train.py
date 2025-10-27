@@ -448,8 +448,6 @@ def main():
         )
     else:
         raw_datasets = datasets.load_dataset("brimmann2/squad_qa1")
-        raw_datasets["dev"] = raw_datasets["dev"].select(range(2))
-        print("raw dataset looks like this: ", raw_datasets)
 
     ## select N samples, mainly for debug
     if args.max_train_samples is not None and len(raw_datasets['train']) > args.max_train_samples:
