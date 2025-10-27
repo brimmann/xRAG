@@ -6,6 +6,8 @@ import os
 import random
 import types
 import pickle,json
+
+
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 os.environ["WANDB_IGNORE_GLOBS"]='*.pth' ## not upload ckpt to wandb cloud
 
@@ -139,6 +141,9 @@ def parse_args():
     )
     parser.add_argument(
         "--train_file", type=str, default=None, help="A csv or a json file containing the training data."
+    )
+    parser.add_argument(
+        "--online_dataset", type=eval, help="use online dataset"
     )
     parser.add_argument(
         "--dev_file", type=str, default=None, help="A csv or a json file containing the dev data."
@@ -426,18 +431,24 @@ def main():
             os.makedirs(args.output_dir, exist_ok=True)
     
     accelerator.wait_for_everyone()
-
-    data_files = {}
-    dataset_args = {}
-    if args.train_file is not None:
-        data_files["train"] = args.train_file
-    if args.dev_file is not None:
-        data_files['dev'] = args.dev_file
-    raw_datasets = load_dataset(
-        "json",
-        data_files=data_files,
-        **dataset_args,
-    )
+    raw_datasets = None
+    print("args.online_dataset:", args.online_dataset)
+    if not args.online_dataset:
+        data_files = {}
+        dataset_args = {}
+        if args.train_file is not None:
+            data_files["train"] = args.train_file
+        if args.dev_file is not None:
+            data_files['dev'] = args.dev_file
+        raw_datasets = load_dataset(
+            "json",
+            data_files=data_files,
+            **dataset_args,
+        )
+    else:
+        raw_datasets = datasets.load_dataset("brimmann2/squad_qa1")
+        raw_datasets["dev"] = raw_datasets["dev"].select(range(2))
+        print("raw dataset looks like this: ", raw_datasets)
 
     ## select N samples, mainly for debug
     if args.max_train_samples is not None and len(raw_datasets['train']) > args.max_train_samples:
@@ -527,8 +538,11 @@ def main():
                 )
 
     train_dataset = lm_datasets["train"]
-    dev_dataset = lm_datasets['dev'] if args.dev_file is not None else None
-
+    dev_dataset = None
+    if not args.online_dataset:
+        dev_dataset = lm_datasets['dev'] if args.dev_file is not None else None
+    else:
+        dev_dataset = lm_datasets['dev']
 
     collate_fn = partial(
         collator,

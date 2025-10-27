@@ -1,11 +1,12 @@
 ## data
 train_file: data/sample_paraphrase_pretrain.jsonl
 # dev_file: data/pretrain/wikipedia/dev.jsonl
+online_dataset: true
 max_seq_length: 336
 retrieval_context_length: 180
 preprocessing_num_workers: 1
 overwrite_cache: false
-max_train_samples: 1
+max_train_samples: 2
 
 ## model
 model_name_or_path: google/gemma-3-1b-it
@@ -19,7 +20,7 @@ learning_rate: 6.0e-3
 lr_scheduler_type: linear
 warmup_ratio: 0.03
 weight_decay: 0.0
-num_train_epochs: 100
+num_train_epochs: 10
 use_flash_attn: false
 alpha_nll: 1.0
 clip_grad_norm: -1.0
@@ -33,6 +34,6 @@ gradient_accumulation_steps: 1 ## assume there are 8 GPUs, so the total batch si
 logging_steps: 1
 project_name: xrag_gemma3_pretraining
 exp_name: sample_pretrain
-# checkpointing_steps: "1000" ## string number or epoch
+checkpointing_steps: "1" ## string number or epoch
 
 
