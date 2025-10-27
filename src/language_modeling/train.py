@@ -247,7 +247,8 @@ def parse_args():
         if getattr(args,k) is None:
             setattr(args,k,v)
 
-    args.train_file = os.path.join(args.workdir,args.train_file)
+    if not args.online_dataset:
+        args.train_file = os.path.join(args.workdir,args.train_file)
     if args.dev_file is not None:args.dev_file = os.path.join(args.workdir,args.dev_file)
     if args.retriever_name_or_path is not None and os.path.isdir(args.retriever_name_or_path):
         args.retriever_name_or_path = os.path.join(args.workdir,args.retriever_name_or_path)
