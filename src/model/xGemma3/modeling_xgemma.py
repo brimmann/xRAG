@@ -1,11 +1,11 @@
 import torch
 import torch.nn as nn
 import re
-from transformers import Gemma3ForCausalLM, Gemma3Config
+from transformers import Gemma3ForCausalLM, Gemma3TextConfig
 
 
 
-class XGemma3Config(Gemma3Config):
+class XGemma3Config(Gemma3TextConfig):
     """
     Configuration class for XGemma model that extends GemmaConfig
     with additional parameters for retrieval embedding projection.

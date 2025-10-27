@@ -28,3 +28,4 @@ pretrained_model
 DeepSpeed
 experiments
 .vscode
+wandb

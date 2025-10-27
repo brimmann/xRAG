@@ -92,7 +92,7 @@ def parse_args():
     )
     parser.add_argument(
         "--chat_format",
-        choices=['mistral','tulu','mixtral','qwen','yi','gemma']
+        choices=['mistral','tulu','mixtral','qwen','yi','gemma', "gemma3"]
     )
     parser.add_argument(
         "--max_train_samples",
@@ -467,7 +467,7 @@ def main():
     model = MODEL_CLASS.from_pretrained(
         args.model_name_or_path,
         config=config,
-        use_flash_attention_2=args.use_flash_attn,
+        # use_flash_attention_2=args.use_flash_attn,
         torch_dtype = torch.bfloat16 if accelerator.mixed_precision == 'bf16' else 'auto',
     )
 
