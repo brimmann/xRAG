@@ -395,7 +395,7 @@ def main():
         config=args,
         init_kwargs={
             "wandb": {
-                "dir": args.workdir, 
+                "dir": '/content/drive/MyDrive/models/xgemma3_1b_run', 
                 "name": args.exp_name if args.exp_name is not None else None,
                 "notes": args.exp_note if args.exp_note is not None else None,
                 "save_code": True,
@@ -447,7 +447,7 @@ def main():
             **dataset_args,
         )
     else:
-        raw_datasets = datasets.load_dataset("brimmann2/squad_qa1")
+        raw_datasets = datasets.load_dataset("brimmann2/enwiki-s1")
 
     ## select N samples, mainly for debug
     if args.max_train_samples is not None and len(raw_datasets['train']) > args.max_train_samples:
