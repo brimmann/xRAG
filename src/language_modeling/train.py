@@ -395,7 +395,7 @@ def main():
         config=args,
         init_kwargs={
             "wandb": {
-                "dir": '/content/drive/MyDrive/models/xgemma3_1b_run', 
+                "dir": args.workdir, 
                 "name": args.exp_name if args.exp_name is not None else None,
                 "notes": args.exp_note if args.exp_note is not None else None,
                 "save_code": True,
