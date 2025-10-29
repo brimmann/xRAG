@@ -540,8 +540,8 @@ def main():
     dev_dataset = None
     if not args.online_dataset:
         dev_dataset = lm_datasets['dev'] if args.dev_file is not None else None
-    else:
-        dev_dataset = lm_datasets['dev']
+    # else:
+    #     dev_dataset = lm_datasets['dev']
 
     collate_fn = partial(
         collator,
