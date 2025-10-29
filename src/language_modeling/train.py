@@ -447,7 +447,7 @@ def main():
             **dataset_args,
         )
     else:
-        raw_datasets = datasets.load_dataset("brimmann2/enwiki-s1")
+        raw_datasets = datasets.load_dataset("brimmann2/xgemma3-finetune-bg")
 
     ## select N samples, mainly for debug
     if args.max_train_samples is not None and len(raw_datasets['train']) > args.max_train_samples:
