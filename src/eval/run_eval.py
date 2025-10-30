@@ -1,6 +1,7 @@
 ## built-in
 import argparse,json,os
 import time
+import pickle
 ## third party
 from transformers import (
     MistralForCausalLM,
@@ -18,6 +19,7 @@ import pandas as pd
 from src.model import (
     XMistralForCausalLM,
     XMixtralForCausalLM,
+    XGemma3ForCausalLM,
     SFR,
 )
 
@@ -395,12 +397,37 @@ if __name__ == "__main__":
 
 
     ## prepare prompt
-    dev_data,test_data = load_dataset(
-        args.data,
-        args.use_rag,
-        args,
-    )
+    # dev_data,test_data = load_dataset(
+    #     args.data,
+    #     args.use_rag,
+    #     args,
+    # )
 
+    def transform_messages(example, idx):
+        """
+        Extracts user question and assistant answer from messages,
+        and assigns a new integer ID.
+        """
+        question = ""
+        answer = ""
+        for message in example['messages']:
+            if message['role'] == 'user':
+                question = message['content'].strip()
+            elif message['role'] == 'assistant':
+                answer = message['content'].strip()
+                
+        return {
+            'id': idx,
+            'question': question,
+            'answer': answer,
+            'background': [example['background']]
+        }
+
+    from datasets import load_dataset as load_dataset_hf
+    ds = load_dataset_hf("brimmann2/squad-xgemma3-1")
+    ds1 = ds.map(transform_messages, with_indices=True, remove_columns=['id', 'messages', 'task_type'])
+    test_data = list(ds1["train"])
+    dev_data = None
     if args.max_test_samples is not None:
         test_data = test_data[:args.max_test_samples]
 
@@ -471,9 +498,17 @@ if __name__ == "__main__":
             enable_progress_bar= args.enable_progress_bar,
         )
 
+        
+        with open("sampled_results.pkl", "wb") as file:
+            pickle.dump(generated_results, file)
+
+        
+
         print("Generated answers: ", generated_results)
 
     answers = [x['answer'] for x in test_data]
+    with open("sampled_answers.pkl", "wb") as file:
+            pickle.dump(answers, file)
     if args.eval_metrics == 'substring_match':
         score,score_per_sample = get_substring_match_score(generated_results,answers)
     elif args.eval_metrics == 'fact_checking_acc':
