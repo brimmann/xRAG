@@ -471,6 +471,8 @@ if __name__ == "__main__":
             enable_progress_bar= args.enable_progress_bar,
         )
 
+        print("Generated answers: ", generated_results)
+
     answers = [x['answer'] for x in test_data]
     if args.eval_metrics == 'substring_match':
         score,score_per_sample = get_substring_match_score(generated_results,answers)
