@@ -121,7 +121,7 @@ def parse_args():
     args = parser.parse_args()
 
     ## post-process
-    if args.data in ['nq_open','hotpotqa','triviaqa','webqa']:
+    if args.data in ['nq_open','hotpotqa','triviaqa','webqa', 'squad_v2']:
         args.task_type = 'open_qa'
         args.eval_metrics = 'substring_match'
     elif args.data in ['truthfulqa']:
