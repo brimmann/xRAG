@@ -53,6 +53,29 @@ def create_prompt_with_mistral_chat_format(messages,tokenizer,*args,**kwargs):
     # formatted_text += " The answer is:"
     return formatted_text
 
+def create_prompt_with_gemma3_chat_format(messages, tokenizer):
+    """
+    Formats a list of messages for a Gemma model by manually applying the chat template.
+    """
+    message_text = ""
+    for message in messages:
+        # Each turn starts with a start_of_turn token
+        message_text += "<start_of_turn>"
+        
+        if message["role"] == "user":
+            # The user role is 'user'
+            message_text += "user\n" + message["content"].strip()
+        elif message["role"] == "assistant":
+            # The assistant role is 'model' in Gemma's format
+            message_text += "model\n" + message["content"].strip()
+        else:
+            raise ValueError("Invalid role: {}".format(message["role"]))
+        
+        # Each turn ends with an end_of_turn token
+        message_text += "<end_of_turn>\n"
+        
+    return message_text
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -224,16 +247,16 @@ def llm_for_open_generation(
         generated_output = llm.generate(
             input_ids = input_ids,
             attention_mask = attention_mask,
-            stopping_criteria=stopping_criteria,
+            # stopping_criteria=stopping_criteria,
             do_sample=False,
-            max_new_tokens=100,
-            pad_token_id=tokenizer.pad_token_id,
+            max_new_tokens=200,
+            pad_token_id=llm_tokenizer.pad_token_id,
             use_cache=True,
             **retrieval_kwargs,
         )
         ## because HF generate with inputs_embeds would not return prompt
         input_length = 0 if retrieval_kwargs else input_ids.shape[1]
-        results = tokenizer.batch_decode(generated_output[:,input_length:],skip_special_tokens=False)
+        results = llm_tokenizer.batch_decode(generated_output[:,input_length:],skip_special_tokens=False)
         generated_answers.extend(results)
         progress_bar.update(batch_size)
 
