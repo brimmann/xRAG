@@ -447,7 +447,7 @@ def main():
             **dataset_args,
         )
     else:
-        raw_datasets = datasets.load_dataset("brimmann2/squad-xgemma3-1")
+        raw_datasets = datasets.load_dataset("brimmann2/enwiki-s1")
 
     ## select N samples, mainly for debug
     if args.max_train_samples is not None and len(raw_datasets['train']) > args.max_train_samples:
@@ -630,7 +630,7 @@ def main():
 
     # Save and push initial model to Hugging Face
     if accelerator.is_main_process:
-        repo_name = "brimmann2/xgemma3-1b-v1"  # Replace with your HF username and desired model name
+        repo_name = "brimmann2/xgemma3-1b-v0"  # Replace with your HF username and desired model name
         
         # Option 1: Save locally first, then push
         output_dir = os.path.join(args.output_dir, "initial_model")
