@@ -15,30 +15,43 @@ def get_model():
 
     return tokenizer, model
 
-def load_data(dataset_id, split_name):
+def load_data(dataset_id, split_name, debug_samples=None):
     ds = load_dataset(dataset_id, split=split_name)
-    documents = ds.select(range(3))["text"]
+
+    documents = None
+    if debug_samples is not None:
+        documents = ds.select(range(debug_samples))["text"]
+    else:
+        documents = ds["text"]
     documents_list = [[s] for s in list(documents)]
     return documents_list
 
 
 
-def get_documents_embeds(dataset_id, split_name, batch_size=1):
+def get_documents_embeds(dataset_id=None, documents_list=None, split_name=None, batch_size=1, debug_samples=None):
 
     print("loading embedder model and tokenizer...")
     tokenizer, model = get_model()
     print("embedder model loaded")
-    
-    documents_list = load_data(dataset_id, split_name)
 
-    num_samples = len(documents_list)
+
+    # See if we are doing embeds for generated text
+    dl = None
+    if dataset_id is not None:
+        dl = load_data(dataset_id, split_name, debug_samples=debug_samples)
+        print("dataset_id is not None")
+    else:
+        dl = documents_list
+        print("dataset_id is None")
+
+    num_samples = len(dl)
     original_orders = []
-    for idx,background in enumerate(documents_list):
+    for idx,background in enumerate(dl):
         original_orders.extend(
                 [idx] * len(background)
             )
 
-    documents_as_strings_list = [x for y in documents_list for x in y]
+    documents_as_strings_list = [x for y in dl for x in y]
 
     print("generating embeddings...")
     _embeds = prepare_retrieval_embeds(list(documents_as_strings_list), model, tokenizer, batch_size=batch_size)

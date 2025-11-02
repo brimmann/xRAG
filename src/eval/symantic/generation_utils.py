@@ -73,23 +73,27 @@ def prepare_prompts(tokenizer, sample_length):
     return prompts
 
 
-def generate_answers(model_id, datatset_id, split, batch_size=4):
+def generate_answers(model_id, dataset_id, split_name, batch_size=4, debug_samples=None):
 
     tokenizer, model = get_model(model_id)
     model.set_xrag_token_id(tokenizer.convert_tokens_to_ids(XRAG_TOKEN))
     _ = model.eval()
 
-    embeddings = get_documents_embeds(datatset_id, split)
+    original_docs_embeddings = get_documents_embeds(dataset_id=dataset_id, split_name=split_name, debug_samples=debug_samples,batch_size=batch_size)
 
-    sample_length = len(embeddings)
+    sample_length = len(original_docs_embeddings)
 
     prompts = prepare_prompts(tokenizer, sample_length)
 
     print("generatring documetns from embeddings...")
-    results = llm_for_open_generation(model,tokenizer,prompts,embeddings,batch_size,True)
+    generated_docs = llm_for_open_generation(model,tokenizer,prompts,original_docs_embeddings,batch_size,True)
     print("documents generated")
 
-    return results
+    # Preparing for embeddings generation
+    documents_list = [[s] for s in list(generated_docs)]
+    generated_docs_embeddings = get_documents_embeds(documents_list=documents_list, debug_samples=debug_samples, batch_size=batch_size)
+
+    return generated_docs, generated_docs_embeddings, original_docs_embeddings
 
 
 
