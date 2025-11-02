@@ -3,6 +3,7 @@ import argparse,json,os
 import time
 import pickle
 ## third party
+from tqdm import tqdm
 from transformers import (
     MistralForCausalLM,
     AutoModelForCausalLM,
@@ -195,7 +196,7 @@ def prepare_retrieval_embeds(backgrounds,retriever,tokenizer,batch_size = 16):
     backgrounds = [backgrounds[idx:idx+batch_size] for idx in range(0,len(backgrounds),batch_size)]
     device = retriever.device
     ret = []
-    for background in backgrounds:
+    for background in tqdm(backgrounds, desc="Preparing retrieval embeds"):
         tokenized_retrieval_text = tokenizer(
             background, 
             max_length=180,

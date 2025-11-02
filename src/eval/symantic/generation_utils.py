@@ -65,10 +65,10 @@ def prepare_prompts(tokenizer, sample_length):
             {"role": "user", "content": p} 
         ] for p in prmopts
     ]
-    print("all messages", all_messages)
+    print("all messages", all_messages[0])
 
     prompts = tokenizer.apply_chat_template(all_messages, tokenize=False, add_generation_prompt=True)
-    print("prompts", prompts)
+    print("prompts", prompts[0])
 
     return prompts
 
