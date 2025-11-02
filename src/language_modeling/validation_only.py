@@ -622,6 +622,7 @@ def main():
         model, optimizer, train_dataloader, lr_scheduler = accelerator.prepare(
         model, optimizer, train_dataloader, lr_scheduler)
 
+    print(dev_dataloader, args.task_type)
     if dev_dataloader is not None and args.task_type == 'pretrain':
         accelerator.print("Evaluating initial model on validation set...")
         ppl = validate_during_pretrain(model, dev_dataloader, accelerator, vocab_size, retriever)
