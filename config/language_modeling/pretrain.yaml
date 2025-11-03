@@ -6,7 +6,7 @@ max_seq_length: 336
 retrieval_context_length: 180
 preprocessing_num_workers: 1
 overwrite_cache: false
-max_train_samples: 1
+max_train_samples: 8550
 
 ## model
 model_name_or_path: google/gemma-3-1b-it
