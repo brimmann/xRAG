@@ -1,9 +1,7 @@
 ## built-in
 import argparse,json,os
 import time
-import pickle
 ## third party
-from tqdm import tqdm
 from transformers import (
     MistralForCausalLM,
     AutoModelForCausalLM,
@@ -20,7 +18,6 @@ import pandas as pd
 from src.model import (
     XMistralForCausalLM,
     XMixtralForCausalLM,
-    XGemma3ForCausalLM,
     SFR,
 )
 
@@ -53,29 +50,6 @@ def create_prompt_with_mistral_chat_format(messages,tokenizer,*args,**kwargs):
                 )
     # formatted_text += " The answer is:"
     return formatted_text
-
-def create_prompt_with_gemma3_chat_format(messages, tokenizer):
-    """
-    Formats a list of messages for a Gemma model by manually applying the chat template.
-    """
-    message_text = ""
-    for message in messages:
-        # Each turn starts with a start_of_turn token
-        message_text += "<start_of_turn>"
-        
-        if message["role"] == "user":
-            # The user role is 'user'
-            message_text += "user\n" + message["content"].strip()
-        elif message["role"] == "assistant":
-            # The assistant role is 'model' in Gemma's format
-            message_text += "model\n" + message["content"].strip()
-        else:
-            raise ValueError("Invalid role: {}".format(message["role"]))
-        
-        # Each turn ends with an end_of_turn token
-        message_text += "<end_of_turn>\n"
-        
-    return message_text
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -147,7 +121,7 @@ def parse_args():
     args = parser.parse_args()
 
     ## post-process
-    if args.data in ['nq_open','hotpotqa','triviaqa','webqa', 'squad_v2']:
+    if args.data in ['nq_open','hotpotqa','triviaqa','webqa']:
         args.task_type = 'open_qa'
         args.eval_metrics = 'substring_match'
     elif args.data in ['truthfulqa']:
@@ -196,7 +170,7 @@ def prepare_retrieval_embeds(backgrounds,retriever,tokenizer,batch_size = 16):
     backgrounds = [backgrounds[idx:idx+batch_size] for idx in range(0,len(backgrounds),batch_size)]
     device = retriever.device
     ret = []
-    for background in tqdm(backgrounds, desc="Preparing retrieval embeds"):
+    for background in backgrounds:
         tokenized_retrieval_text = tokenizer(
             background, 
             max_length=180,
@@ -248,16 +222,16 @@ def llm_for_open_generation(
         generated_output = llm.generate(
             input_ids = input_ids,
             attention_mask = attention_mask,
-            # stopping_criteria=stopping_criteria,
+            stopping_criteria=stopping_criteria,
             do_sample=False,
-            max_new_tokens=200,
-            pad_token_id=llm_tokenizer.pad_token_id,
+            max_new_tokens=100,
+            pad_token_id=tokenizer.pad_token_id,
             use_cache=True,
             **retrieval_kwargs,
         )
         ## because HF generate with inputs_embeds would not return prompt
         input_length = 0 if retrieval_kwargs else input_ids.shape[1]
-        results = llm_tokenizer.batch_decode(generated_output[:,input_length:],skip_special_tokens=False)
+        results = tokenizer.batch_decode(generated_output[:,input_length:],skip_special_tokens=False)
         generated_answers.extend(results)
         progress_bar.update(batch_size)
 
@@ -421,37 +395,12 @@ if __name__ == "__main__":
 
 
     ## prepare prompt
-    # dev_data,test_data = load_dataset(
-    #     args.data,
-    #     args.use_rag,
-    #     args,
-    # )
+    dev_data,test_data = load_dataset(
+        args.data,
+        args.use_rag,
+        args,
+    )
 
-    def transform_messages(example, idx):
-        """
-        Extracts user question and assistant answer from messages,
-        and assigns a new integer ID.
-        """
-        question = ""
-        answer = ""
-        for message in example['messages']:
-            if message['role'] == 'user':
-                question = message['content'].strip()
-            elif message['role'] == 'assistant':
-                answer = message['content'].strip()
-                
-        return {
-            'id': idx,
-            'question': question,
-            'answer': answer,
-            'background': [example['background']]
-        }
-
-    from datasets import load_dataset as load_dataset_hf
-    ds = load_dataset_hf("brimmann2/squad-xgemma3-1")
-    ds1 = ds.map(transform_messages, with_indices=True, remove_columns=['id', 'messages', 'task_type'])
-    test_data = list(ds1["train"])
-    dev_data = None
     if args.max_test_samples is not None:
         test_data = test_data[:args.max_test_samples]
 
@@ -522,17 +471,7 @@ if __name__ == "__main__":
             enable_progress_bar= args.enable_progress_bar,
         )
 
-        
-        with open("sampled_results.pkl", "wb") as file:
-            pickle.dump(generated_results, file)
-
-        
-
-        print("Generated answers: ", generated_results)
-
     answers = [x['answer'] for x in test_data]
-    with open("sampled_answers.pkl", "wb") as file:
-            pickle.dump(answers, file)
     if args.eval_metrics == 'substring_match':
         score,score_per_sample = get_substring_match_score(generated_results,answers)
     elif args.eval_metrics == 'fact_checking_acc':
