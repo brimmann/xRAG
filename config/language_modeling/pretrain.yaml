@@ -34,6 +34,6 @@ gradient_accumulation_steps: 12 ## assume there are 8 GPUs, so the total batch s
 logging_steps: 1
 project_name: xrag_gemma3_pretraining
 exp_name: sample_pretrain
-checkpointing_steps: "2000" ## string number or epoch
+checkpointing_steps: "2" ## string number or epoch
 
 
