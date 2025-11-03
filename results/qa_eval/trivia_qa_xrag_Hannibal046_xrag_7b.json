@@ -1,0 +1,9 @@
+{
+    "dataset": "triviaqa",
+    "batch_size": 128,
+    "include_retrieval": true,
+    "avg_prompt_length": 54.0796428887121,
+    "model": "Hannibal046/xrag-7b",
+    "substring_match": 0.6702,
+    "retriever": "Salesforce/SFR-Embedding-Mistral"
+}

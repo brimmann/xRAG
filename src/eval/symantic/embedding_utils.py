@@ -15,20 +15,20 @@ def get_model():
 
     return tokenizer, model
 
-def load_data(dataset_id, split_name, debug_samples=None):
+def load_data(column_name, dataset_id, split_name, debug_samples=None):
     ds = load_dataset(dataset_id, split=split_name)
 
     documents = None
     if debug_samples is not None:
-        documents = ds.select(range(debug_samples))["text"]
+        documents = ds.select(range(debug_samples))[column_name]
     else:
-        documents = ds["text"]
+        documents = ds[column_name]
     documents_list = [[s] for s in list(documents)]
     return documents_list
 
 
 
-def get_documents_embeds(dataset_id=None, documents_list=None, split_name=None, batch_size=1, debug_samples=None):
+def get_documents_embeds(dataset_id=None, documents_list=None, split_name=None, batch_size=1, debug_samples=None, column_name="text"):
 
     print("loading embedder model and tokenizer...")
     tokenizer, model = get_model()
@@ -38,7 +38,7 @@ def get_documents_embeds(dataset_id=None, documents_list=None, split_name=None, 
     # See if we are doing embeds for generated text
     dl = None
     if dataset_id is not None:
-        dl = load_data(dataset_id, split_name, debug_samples=debug_samples)
+        dl = load_data(column_name, dataset_id, split_name, debug_samples=debug_samples)
         print("dataset_id is not None")
     else:
         dl = documents_list

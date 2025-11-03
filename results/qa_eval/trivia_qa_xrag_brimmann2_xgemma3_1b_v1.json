@@ -1,0 +1,9 @@
+{
+    "dataset": "triviaqa",
+    "batch_size": 64,
+    "include_retrieval": true,
+    "avg_prompt_length": 47.02218686466897,
+    "model": "brimmann2/xgemma3-1b-v1",
+    "substring_match": 0.2259,
+    "retriever": "Salesforce/SFR-Embedding-Mistral"
+}

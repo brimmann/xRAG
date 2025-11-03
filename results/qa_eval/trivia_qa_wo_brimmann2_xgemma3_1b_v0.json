@@ -1,0 +1,8 @@
+{
+    "dataset": "triviaqa",
+    "batch_size": 64,
+    "include_retrieval": true,
+    "avg_prompt_length": 200.5080880403076,
+    "model": "brimmann2/xgemma3-1b-v0",
+    "substring_match": 0.4982
+}
