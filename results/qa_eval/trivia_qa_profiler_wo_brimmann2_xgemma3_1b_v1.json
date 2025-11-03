@@ -1,0 +1,11 @@
+{
+    "instruction_length": 54,
+    "document_length": 180,
+    "prompt_length": 234,
+    "generation_length": 30,
+    "use_xrag": false,
+    "cpu_time": 1.9438320302,
+    "cuda_time": 0.0,
+    "gflops": 210.3904454864,
+    "peak_mem": 3.9909873008728027
+}

@@ -22,8 +22,8 @@ if __name__ == "__main__":
 
     device = torch.device("cuda")
     torch_dtype = torch.bfloat16
-    # pretrained_model_name_or_path = "Hannibal046/xrag-7b"
-    pretrained_model_name_or_path = "brimmann2/xgemma3-1b-v1"
+    pretrained_model_name_or_path = "Hannibal046/xrag-7b"
+    # pretrained_model_name_or_path = "brimmann2/xgemma3-1b-v1"
     num_trails = 10
     batch_size = 12
     instruction_length = args.instruction_length
