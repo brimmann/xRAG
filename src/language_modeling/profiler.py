@@ -98,8 +98,8 @@ if __name__ == "__main__":
             break
 
     total_cpu_time = model_inference_event.cpu_time_total/1000**2 / num_trails
-    # total_cuda_time = model_inference_event.cuda_time_total/1000**2 / num_trails
-    total_cuda_time = getattr(model_inference_event, 'cuda_time_total', 0)/1000**2 / num_trails
+    total_cuda_time = model_inference_event.cuda_time_total/1000**2 / num_trails
+    # total_cuda_time = getattr(model_inference_event, 'cuda_time_total', 0)/1000**2 / num_trails
     total_gflops = sum([event.flops for event in events]) / 1e9 / num_trails
     
     result_dict =  {
