@@ -786,7 +786,7 @@ def main():
                 if isinstance(checkpointing_steps, int):
                     if completed_steps % checkpointing_steps == 0:
                         output_dir = os.path.join(args.output_dir, f"step_{completed_steps}")
-                        save_with_accelerate(accelerator, model, tokenizer, output_dir,save_projector_only=args.update_projector_only)
+                        # save_with_accelerate(accelerator, model, tokenizer, output_dir,save_projector_only=args.update_projector_only)
 
                         if dev_dataloader is not None:
                             if args.task_type == 'pretrain':
