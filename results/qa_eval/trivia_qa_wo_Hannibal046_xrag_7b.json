@@ -1,0 +1,8 @@
+{
+    "dataset": "triviaqa",
+    "batch_size": 128,
+    "include_retrieval": true,
+    "avg_prompt_length": 226.265270043313,
+    "model": "Hannibal046/xrag-7b",
+    "substring_match": 0.6834
+}
