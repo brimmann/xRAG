@@ -71,7 +71,7 @@ def create_prompt_with_gemma3_chat_format(messages, tokenizer):
             raise ValueError("Invalid role: {}".format(message["role"]))
         
         # Each turn ends with an end_of_turn token
-        message_text += "<end_of_turn>"
+        message_text += "<end_of_turn>\n<start_of_turn>model\n"
         
     return message_text
 
