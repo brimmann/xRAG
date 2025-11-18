@@ -1,0 +1,22 @@
+// FX Graph
+digraph my_module_graph {
+	node_0 [label="placeholder
+x
+" shape=box]
+	node_1 [label="call_module
+linear1
+linear1" shape=box]
+	node_2 [label="call_module
+relu
+relu" shape=box]
+	node_3 [label="call_module
+linear2
+linear2" shape=box]
+	node_4 [label="output
+output
+" shape=box]
+	node_0 -> node_1
+	node_1 -> node_2
+	node_2 -> node_3
+	node_3 -> node_4
+}
