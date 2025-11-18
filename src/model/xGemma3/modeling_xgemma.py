@@ -12,7 +12,7 @@ class XGemma3Config(Gemma3TextConfig):
     """
     def __init__(
         self,
-        projector_type='mlp2x_gelu',
+        projector_type='mlp3x_gelu',
         retriever_hidden_size=128,
         **kwargs,
     ):
