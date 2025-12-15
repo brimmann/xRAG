@@ -9,7 +9,7 @@ import argparse
 
 # model_id = 'Hannibal046/xrag-7b'
 # # model_id = 'brimmann2/xgemma3-1b-v1'
-dataset_id = 'brimmann2/squad_qa1'
+dataset_id = 'FiscalNote/billsum'
 split_name = "train"
 
 def get_cosine_similarity(original_docs_emb, generated_docs_emb):
