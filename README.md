@@ -1,41 +1,29 @@
-# xRAG
+Here is the updated README tailored for your thesis work. I stripped out the old image links, swapped the model info to Gemma 3, and updated the training and evaluation sections to reflect your new cosine similarity metric and current progress.
+```markdown
+# xRAG (Gemma 3 1B Fork)
 
-Official repo for [xRAG: Extreme Context Compression for Retrieval-augmented Generation with One Token](https://arxiv.org/abs/2405.13792)
+This is a modified version of the original [xRAG](https://arxiv.org/abs/2405.13792) repository, developed as part of my Master's thesis in Data Science. 
 
-<div align=center>
-<img src="assets/framework.jpg" alt="xRAG">
-</div>
-
+**Key changes in this fork:**
+* **Model Swap:** Replaced the original backbones with the lighter 1-billion parameter Gemma 3 model.
+* **Current Training Stage:** The model has only been trained on the **paraphrasing stage**. It has not been fine-tuned yet, so it cannot answer standard RAG evaluation tasks at this time.
+* **New Evaluation Task:** Introduced a custom evaluation metric to measure paraphrasing comprehension. This task calculates the cosine similarity between the original document and the document regenerated from its vector form to see how well the model actually understands the vectorized format.
 
 ## Get Started
-Refer to `Dockerfile` for required packages
+Refer to the `Dockerfile` for required packages.
 
-Configure `wandb` and `accelerate`
+Configure your environment:
 ```bash
 wandb login
 accelerate config
+
 ```
-
-## Pretrained Checkpoints
-HuggingFace
-| Model                 | Backbone | Download                                                                    |
-|-----------------------|-----------------|-----------------------------------------------------------------------------|
-| xRAG-7b | [mistralai/Mistral-7B-Instruct-v0.2](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2)            | [🤗 Hugging Face](https://huggingface.co/Hannibal046/xrag-7b) |
-| xRAG-MoE | [mistralai/Mixtral-8x7B-Instruct-v0.1](https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1)            | [🤗 Hugging Face](https://huggingface.co/Hannibal046/xrag-moe) |
-
-
-## Tutorial
-
-We provide a tutorial for xRAG in `tutorial.ipynb`. Check it out!
-
 ## Data
-- download [enwiki-dec2021](https://github.com/facebookresearch/atlas?tab=readme-ov-file#models) as pretraining data and corpus for retrieval
-- prepare instruction tuning data in `prepare_data.ipynb`
-- download [TriviaQA](https://drive.google.com/drive/folders/1lFFTklW_0HuR53hLpFdLClgfSAhXn_2f)
-- using [ColBERT-v2](https://github.com/stanford-futuredata/ColBERT.git) to conduct retrieval
-
-## Training
-Training scripts in `scripts/`, for example, to train a Mistral-7b with SFR:
+ * Download enwiki-dec2021 as pretraining data and the retrieval corpus.
+ * Prepare your instruction tuning data using prepare_data.ipynb.
+ * Use ColBERT-v2 to conduct retrieval.
+## Training (Paraphrasing Stage)
+Training scripts are in scripts/. To train the Gemma 3 (1B) model on the paraphrasing stage:
 ```bash
 accelerate launch \
     --mixed_precision bf16 \
@@ -45,37 +33,16 @@ accelerate launch \
     -m \
     src.language_modeling.train \
     --config config/language_modeling/pretrain.yaml \
-```
-## Evaluation
-The evaluation code is in `src/eval`. For example, to evaluate on TriviaQA:
 
-without retrieval augmentation:
+```
+## Evaluation (Cosine Similarity)
+Since the model is not yet fine-tuned for downstream generation, standard RAG evaluation is disabled.
+To run the custom paraphrasing evaluation (measuring cosine similarity between the original document and the vector-regenerated document):
 ```bash
-CUDA_VISIBLE_DEVICES=0 python -m src.eval.run_eval \
-        --data triviaqa \
-        --model_name_or_path Hannibal046/xrag-7b
+CUDA_VISIBLE_DEVICES=0 python -m src.eval.run_similarity_eval \
+        --model_name_or_path your-local-path/xrag-gemma3-1b
+
+```
 ```
 
-with retrieval augmentation:
-```bash
-CUDA_VISIBLE_DEVICES=0 python -m src.eval.run_eval \
-        --data triviaqa \
-        --model_name_or_path Hannibal046/xrag-7b \
-        --use_rag
-```
-
-with xRAG:
-```bash
-CUDA_VISIBLE_DEVICES=0 python -m src.eval.run_eval \
-        --data triviaqa \
-        --model_name_or_path Hannibal046/xrag-7b \
-        --retriever_name_or_path Salesforce/SFR-Embedding-Mistral \
-        --use_rag
-```
-
-## Benchmark
-To benchmark xRAG, we provide the code in `src/language_modeling/profiler.py`.
-```
-python -m src.language_modeling.profiler --instruction_length 54 --generation_length 30 --dataset triviaqa --use_xrag
-python -m src.language_modeling.profiler --instruction_length 54 --generation_length 30 --dataset triviaqa
 ```
