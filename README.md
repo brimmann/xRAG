@@ -1,5 +1,3 @@
-Here is the updated README tailored for your thesis work. I stripped out the old image links, swapped the model info to Gemma 3, and updated the training and evaluation sections to reflect your new cosine similarity metric and current progress.
-```markdown
 # xRAG (Gemma 3 1B Fork)
 
 This is a modified version of the original [xRAG](https://arxiv.org/abs/2405.13792) repository, developed as part of my Master's thesis in Data Science. 
@@ -45,4 +43,3 @@ CUDA_VISIBLE_DEVICES=0 python -m src.eval.run_similarity_eval \
 ```
 ```
 
-```
